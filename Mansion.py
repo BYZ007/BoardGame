@@ -9,17 +9,18 @@ from constants import *
 import random
 import pandas as pd
 import logging
+from typing import Dict, List
 logging.basicConfig(level=logging.INFO)
 
 
 class Mansion():
     def __init__(self) -> Mansion:
-        self.unassigned_rooms = None
-        self.unstable_rooms = None
-        self.rooms = None
-        self.layout = None
-        self.n_rooms = len(RoomName)
-        self.characters = None
+        self.unassigned_rooms: List[RoomName] = None
+        self.unstable_rooms: List[RoomName] = None
+        self.rooms: Dict[RoomName, Room] = None
+        self.layout: pd.DataFrame = None
+        self.n_rooms: int = len(RoomName)
+        self.characters: Dict[CharacterName, Character] = None
 
     def _set_quantum_pair(self) -> None:
         pair = random.sample(self.unassigned_rooms, 2)
