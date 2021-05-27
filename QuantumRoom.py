@@ -17,18 +17,9 @@ class QuantumRoom(Room):
     def enter(self, character: Character.Character, room: Room, direction: Tuple[int]) -> None:
         super().enter(character, room, direction)
         if not self.pair.occupied:
-            self.pair.stable = False
+            self.pair.stable.set(False)
 
     def exit(self, character: Character.Character) -> None:
         super().exit(character)
         if self.pair.stable and len(self.characters) == 0:
-            self.stable = False
-            self.break_all_connections()
-            if self.mansion != None:
-                self.mansion.unstable_rooms.append(self.name)
-
-    def break_connection_actions(self) -> None:
-        pass
-
-    def make_connection_actions(self) -> None:
-        pass
+            self.stable.set(False)

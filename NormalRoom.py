@@ -7,9 +7,3 @@ import Mansion
 class NormalRoom(Room):
     def __init__(self, name: RoomName, mansion: Mansion.Mansion) -> NormalRoom:
         super().__init__(name, RoomType.Normal, mansion)
-
-    def break_connection_actions(self) -> None:
-        pass
-
-    def make_connection_actions(self) -> None:
-        pass

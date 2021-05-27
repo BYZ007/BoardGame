@@ -10,22 +10,16 @@ class FlipRoom(Room):
     def __init__(self, name: RoomName, mansion: Mansion.Mansion) -> FlipRoom:
         super().__init__(name, RoomType.Flip, mansion)
 
-    def enter(self, character: Character.Character, room: Room, direction: Tuple[str]) -> None:
-        self.stable = True
-        self.occupied = True
-        self.characters.append(character.name)
-        connected_room = self.connections[direction]
+    def enter(self, character: Character.Character, room: Room, direction: Tuple[int]) -> None:
+        super().enter(character,room,direction)
 
-        if connected_room != None:
-            self.make_connection(connected_room, Direction.invert(direction))
-            connected_room.break_connection(Direction.invert(direction))
+        forward_pos = self.pos+direction
+        room_ahead = self.mansion.layout.loc[self.mansion.layout.Position==forward_pos,'Room']
+        # fliping of the previous room needs to happen after room_ahead is defined
+        # else the position search will return both rooms
+        room.flip(self.pos)
 
-        self.mansion.update_room(self)
+        if not room_ahead.empty:
+            room_ahead = room_ahead.iloc[0]
+            room_ahead.flip(self.pos)
 
-        self.make_connection(room, direction)
-
-    def break_connection_actions(self) -> None:
-        pass
-
-    def make_connection_actions(self) -> None:
-        pass

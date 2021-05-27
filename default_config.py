@@ -3,7 +3,7 @@ from Character import Character
 from QuantumRoom import QuantumRoom
 from FlipRoom import FlipRoom
 from NormalRoom import NormalRoom
-from constants import *
+from constants import RoomName,CharacterName
 from Mansion import Mansion
 
 default_mansion = Mansion()
@@ -18,9 +18,7 @@ default_mansion.rooms = {
 
 starting_room = default_mansion.rooms[RoomName.BedRoom]
 default_character.intialize_character(starting_room)
-starting_room.stable = True
-starting_room.occupied = True
-default_mansion.update_room(starting_room)
-default_mansion.unstable_rooms = set(list(default_mansion.rooms.keys()))-set([starting_room.name])
+starting_room.stable.set(True)
+starting_room.occupied.set(True)
 default_mansion._initialize_layout()
 

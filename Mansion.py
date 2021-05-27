@@ -5,7 +5,7 @@ from QuantumRoom import QuantumRoom
 from FlipRoom import FlipRoom
 from NormalRoom import NormalRoom
 from Room import Room
-from constants import RoomName, CharacterName
+from constants import RoomName,CharacterName
 import random
 import pandas as pd
 import logging
@@ -56,21 +56,20 @@ class Mansion():
 
     def _initialize_layout(self) -> None:
         self.layout = pd.DataFrame(
-            {
-                'Position': [room.pos for room in self.rooms.values()],
+            {   
+                'Position' : [room.pos for room in self.rooms.values()],
                 'Room': list(self.rooms.values()),
                 'Room Type': [room.room_type.name for room in self.rooms.values()],
                 'Stable': [room.stable for room in self.rooms.values()],
                 'Occupied': [room.occupied for room in self.rooms.values()],
                 'Characters': [room.characters for room in self.rooms.values()],
-                'Index': [name.value for name in self.rooms.keys()]
+                'Index':[name.value for name in self.rooms.keys()]
             })
 
         self.layout.set_index('Index', inplace=True)
 
     def get_next_room(self) -> Room:
-        unstable_rooms = self.layout.loc[self.layout.Stable != True, 'Room'].tolist(
-        )
+        unstable_rooms = self.layout.loc[self.layout.Stable!=True,'Room'].tolist()
         if len(unstable_rooms) != 0:
             sampled_room = random.sample(unstable_rooms, 1)[0]
 
@@ -82,9 +81,9 @@ class Mansion():
 
     def _initailize_characters(self) -> None:
         starting_room = self.get_next_room()
-        starting_room.stable = True
-        starting_room.occupied = True
-        starting_room.pos = (0, 0)
+        starting_room.stable.set(True)
+        starting_room.occupied.set(True)
+        starting_room.pos.set((0,0))
 
         for name in list(CharacterName):
             character = Character(name, self)
@@ -100,3 +99,4 @@ class Mansion():
         self._initialize_rooms()
         self._initialize_layout()
         self._initailize_characters()
+
