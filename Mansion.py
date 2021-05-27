@@ -5,7 +5,7 @@ from QuantumRoom import QuantumRoom
 from FlipRoom import FlipRoom
 from NormalRoom import NormalRoom
 from Room import Room
-from constants import *
+from constants import RoomName, CharacterName
 import random
 import pandas as pd
 import logging
@@ -16,7 +16,6 @@ logging.basicConfig(level=logging.INFO)
 class Mansion():
     def __init__(self) -> Mansion:
         self.unassigned_rooms: List[RoomName] = None
-        self.unstable_rooms: List[RoomName] = None
         self.rooms: Dict[RoomName, Room] = None
         self.layout: pd.DataFrame = None
         self.n_rooms: int = len(RoomName)
@@ -58,22 +57,23 @@ class Mansion():
     def _initialize_layout(self) -> None:
         self.layout = pd.DataFrame(
             {
-                'Room Name': list(self.rooms.keys()),
+                'Position': [room.pos for room in self.rooms.values()],
+                'Room': list(self.rooms.values()),
                 'Room Type': [room.room_type.name for room in self.rooms.values()],
                 'Stable': [room.stable for room in self.rooms.values()],
                 'Occupied': [room.occupied for room in self.rooms.values()],
                 'Characters': [room.characters for room in self.rooms.values()],
-                'Connections': [room.connections for room in self.rooms.values()]
+                'Index': [name.value for name in self.rooms.keys()]
             })
 
-        self.layout.set_index('Room Name', inplace=True)
+        self.layout.set_index('Index', inplace=True)
 
     def get_next_room(self) -> Room:
-        if len(self.unstable_rooms) != 0:
-            sampled_room_name = random.sample(self.unstable_rooms, 1)[0]
-            self.unstable_rooms -= set([sampled_room_name])
+        unstable_rooms = self.layout.loc[self.layout.Stable != True, 'Room'].tolist(
+        )
+        if len(unstable_rooms) != 0:
+            sampled_room = random.sample(unstable_rooms, 1)[0]
 
-            sampled_room = self.rooms[sampled_room_name]
             logging.info(f'{sampled_room.name.name} drawn as the next room')
             return sampled_room
         else:
@@ -84,7 +84,7 @@ class Mansion():
         starting_room = self.get_next_room()
         starting_room.stable = True
         starting_room.occupied = True
-        self.update_room(starting_room)
+        starting_room.pos = (0, 0)
 
         for name in list(CharacterName):
             character = Character(name, self)
@@ -93,7 +93,6 @@ class Mansion():
 
     def setup_game(self) -> None:
         self.unassigned_rooms = set(list(RoomName))
-        self.unstable_rooms = set(list(RoomName))
         self.rooms = {}
         self.layout = None
         self.characters = {}
@@ -101,8 +100,3 @@ class Mansion():
         self._initialize_rooms()
         self._initialize_layout()
         self._initailize_characters()
-
-    def update_room(self, room: Room) -> None:
-        logging.info(f'Updating room {room.name.name}')
-        self.layout.loc[room.name, 'Stable'] = room.stable
-        self.layout.loc[room.name, 'Occupied'] = room.occupied
